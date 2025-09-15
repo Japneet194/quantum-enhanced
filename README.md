@@ -65,3 +65,37 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+---
+
+## Deploying to Vercel (Frontend)
+
+This app is a Vite + React + TypeScript SPA. The repository includes `vercel.json` to build and serve the SPA with index.html fallback.
+
+### Environment variables
+
+Set the following in Vercel Project → Settings → Environment Variables:
+
+- `VITE_CLERK_PUBLISHABLE_KEY` (required)
+- `VITE_API_URL` (recommended): URL to your backend API, e.g. `https://api.example.com` or your deployed functions path like `https://your-app.vercel.app/api`
+- `VITE_WS_URL` (optional)
+
+### API base URL behavior
+
+`src/lib/apiBaseUrl.ts` resolves in this order:
+
+1. If `VITE_API_URL` is set → use it.
+2. If on localhost → `http://localhost:4000`.
+3. Else (e.g., Vercel) → same-origin `/api`. Configure a proxy/rewrites if you want to hit a backend from the same domain.
+
+### Build
+
+Vercel uses `@vercel/static-build` via `vercel.json` to run `vite build` and serve `dist/`.
+
+Local:
+
+```sh
+npm run build
+npm run preview
+```
+
