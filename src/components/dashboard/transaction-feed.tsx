@@ -1,0 +1,230 @@
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, CheckCircle, XCircle, Leaf, ShoppingCart, Car, Home, Gamepad2, Coffee } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface Transaction {
+  id: string;
+  merchant: string;
+  amount: number;
+  currency: string;
+  category: string;
+  timestamp: Date;
+  isAnomaly: boolean;
+  anomalyReason?: string;
+  carbonScore: number;
+  status: "pending" | "verified" | "flagged";
+}
+
+const mockTransactions: Transaction[] = [
+  {
+    id: "1",
+    merchant: "Amazon India",
+    amount: -15999,
+    currency: "INR",
+    category: "shopping",
+    timestamp: new Date(Date.now() - 1000 * 60 * 15),
+    isAnomaly: true,
+    anomalyReason: "Amount 3x higher than average shopping spend",
+    carbonScore: 85,
+    status: "flagged"
+  },
+  {
+    id: "2",
+    merchant: "Shell Petrol Pump",
+    amount: -3500,
+    currency: "INR",
+    category: "fuel",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+    isAnomaly: false,
+    carbonScore: 95,
+    status: "verified"
+  },
+  {
+    id: "3",
+    merchant: "Swiggy",
+    amount: -450,
+    currency: "INR",
+    category: "food",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
+    isAnomaly: false,
+    carbonScore: 30,
+    status: "verified"
+  },
+  {
+    id: "4",
+    merchant: "BSES Delhi",
+    amount: -2100,
+    currency: "INR",
+    category: "utilities",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
+    isAnomaly: false,
+    carbonScore: 70,
+    status: "verified"
+  },
+  {
+    id: "5",
+    merchant: "Steam Games",
+    amount: -2999,
+    currency: "INR",
+    category: "entertainment",
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
+    isAnomaly: true,
+    anomalyReason: "Unusual gaming purchase outside normal pattern",
+    carbonScore: 10,
+    status: "pending"
+  }
+];
+
+const categoryIcons = {
+  shopping: ShoppingCart,
+  fuel: Car,
+  food: Coffee,
+  utilities: Home,
+  entertainment: Gamepad2,
+} as const;
+
+const getCarbonColor = (score: number) => {
+  if (score >= 80) return "text-danger";
+  if (score >= 50) return "text-warning";
+  return "text-success";
+};
+
+const formatAmount = (amount: number, currency: string) => {
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+  });
+  return formatter.format(amount);
+};
+
+const formatTimestamp = (timestamp: Date) => {
+  const now = new Date();
+  const diffMinutes = Math.floor((now.getTime() - timestamp.getTime()) / (1000 * 60));
+  
+  if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  } else if (diffMinutes < 24 * 60) {
+    return `${Math.floor(diffMinutes / 60)}h ago`;
+  } else {
+    return `${Math.floor(diffMinutes / (24 * 60))}d ago`;
+  }
+};
+
+export const TransactionFeed: React.FC = () => {
+  return (
+    <Card className="col-span-full lg:col-span-2">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+          Live Transaction Feed
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {mockTransactions.map((transaction) => {
+          const CategoryIcon = categoryIcons[transaction.category as keyof typeof categoryIcons] || ShoppingCart;
+          
+          return (
+            <div
+              key={transaction.id}
+              className={cn(
+                "p-4 rounded-lg border transition-all duration-200 hover:shadow-md",
+                transaction.isAnomaly 
+                  ? "border-warning/30 bg-warning-light" 
+                  : "border-border bg-card"
+              )}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-3 flex-1">
+                  {/* Icon & Category */}
+                  <div className="p-2 rounded-lg bg-muted">
+                    <CategoryIcon className="w-4 h-4" />
+                  </div>
+                  
+                  {/* Transaction Details */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-semibold truncate">{transaction.merchant}</h4>
+                      <span className="font-bold text-lg">
+                        {formatAmount(transaction.amount, transaction.currency)}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" className="text-xs">
+                        {transaction.category}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatTimestamp(transaction.timestamp)}
+                      </span>
+                    </div>
+
+                    {/* Anomaly Alert */}
+                    {transaction.isAnomaly && transaction.anomalyReason && (
+                      <div className="flex items-center gap-2 p-2 rounded bg-warning/10 border border-warning/20 mb-2">
+                        <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
+                        <span className="text-xs text-warning-foreground">
+                          {transaction.anomalyReason}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Bottom Row */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        {/* Carbon Score */}
+                        <div className="flex items-center gap-1">
+                          <Leaf className={cn("w-3 h-3", getCarbonColor(transaction.carbonScore))} />
+                          <span className={cn("text-xs font-medium", getCarbonColor(transaction.carbonScore))}>
+                            {transaction.carbonScore}
+                          </span>
+                        </div>
+
+                        {/* Status */}
+                        <div className="flex items-center gap-1">
+                          {transaction.status === "verified" && (
+                            <CheckCircle className="w-3 h-3 text-success" />
+                          )}
+                          {transaction.status === "flagged" && (
+                            <XCircle className="w-3 h-3 text-danger" />
+                          )}
+                          {transaction.status === "pending" && (
+                            <div className="w-3 h-3 rounded-full bg-warning animate-pulse" />
+                          )}
+                          <span className="text-xs text-muted-foreground capitalize">
+                            {transaction.status}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      {transaction.isAnomaly && transaction.status !== "verified" && (
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                            Verify
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                            Flag
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        <div className="text-center py-4">
+          <Button variant="outline" size="sm">
+            Load More Transactions
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
