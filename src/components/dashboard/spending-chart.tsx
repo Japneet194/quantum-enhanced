@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Badge, badgeVariants } from "@/components/ui/badge";
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from "recharts";
 import { TrendingUp, TrendingDown, AlertTriangle } from "lucide-react";
 
@@ -48,12 +48,12 @@ export const SpendingChart: React.FC = () => {
           <CardTitle>Spending Pattern Analysis</CardTitle>
           <div className="flex items-center gap-2">
             {variance > 10 && (
-              <Badge variant="destructive" className="gap-1">
+              <Badge className={`${badgeVariants({ variant: 'destructive' })} gap-1`}>
                 <AlertTriangle className="w-3 h-3" />
                 High Variance
               </Badge>
             )}
-            <Badge variant="outline" className="gap-1">
+            <Badge className={`${badgeVariants({ variant: 'outline' })} gap-1`}>
               {variance > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               {Math.abs(variance).toFixed(1)}%
             </Badge>

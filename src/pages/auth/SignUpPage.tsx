@@ -18,6 +18,7 @@ const SignUpPage: React.FC = () => {
         path="/sign-up"
         signInUrl="/sign-in"
         afterSignUpUrl="/"
+        redirectUrl="/sso-callback"
         appearance={{ elements: { formButtonPrimary: 'bg-primary hover:bg-primary/90' } }}
       />
     </div>

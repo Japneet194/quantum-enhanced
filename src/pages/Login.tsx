@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const Login: React.FC = () => {
@@ -37,10 +37,10 @@ const Login: React.FC = () => {
         <Input type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
         {err && <div className="text-red-600 text-sm">{err}</div>}
         <div className="flex gap-2">
-          <Button className="flex-1" onClick={submit}>{mode==='login' ? 'Login' : 'Register'}</Button>
-          <Button variant="outline" onClick={()=>setMode(mode==='login'?'register':'login')}>
+          <button type="button" className={`${buttonVariants()} flex-1`} onClick={submit}>{mode==='login' ? 'Login' : 'Register'}</button>
+          <button type="button" className={buttonVariants({ variant: 'outline' })} onClick={()=>setMode(mode==='login'?'register':'login')}>
             Switch to {mode==='login'?'Register':'Login'}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

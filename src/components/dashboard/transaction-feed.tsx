@@ -1,8 +1,8 @@
 import * as React from "react";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { badgeVariants } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
 import { AlertTriangle, CheckCircle, XCircle, Leaf, ShoppingCart, Car, Home, Gamepad2, Coffee } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -145,7 +145,7 @@ export const TransactionFeed: React.FC = () => {
   };
 
   return (
-    <Card className="col-span-full lg:col-span-2 animate-slide-in-left">
+    <Card id="feed" className="col-span-full lg:col-span-2 animate-slide-in-left">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
@@ -185,9 +185,9 @@ export const TransactionFeed: React.FC = () => {
                     </div>
                     
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="outline" className="text-xs">
+                      <div className={`${badgeVariants({ variant: 'outline' })} text-xs`}>
                         {transaction.category}
-                      </Badge>
+                      </div>
                       <span className="text-xs text-muted-foreground">
                         {formatTimestamp(transaction.timestamp)}
                       </span>
@@ -234,12 +234,12 @@ export const TransactionFeed: React.FC = () => {
                       {/* Action Buttons */}
                       {transaction.isAnomaly && transaction.status !== "verified" && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => updateStatus(transaction.id, 'verified')} className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-success/10 hover:text-success hover:border-success">
+                          <button type="button" onClick={() => updateStatus(transaction.id, 'verified')} className={`${buttonVariants({ variant: 'outline', size: 'sm' })} h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-success/10 hover:text-success hover:border-success`}>
                             Verify
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => updateStatus(transaction.id, 'flagged')} className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-danger/10 hover:text-danger hover:border-danger">
+                          </button>
+                          <button type="button" onClick={() => updateStatus(transaction.id, 'flagged')} className={`${buttonVariants({ variant: 'outline', size: 'sm' })} h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-danger/10 hover:text-danger hover:border-danger`}>
                             Flag
-                          </Button>
+                          </button>
                         </div>
                       )}
                     </div>
@@ -251,9 +251,9 @@ export const TransactionFeed: React.FC = () => {
         })}
 
         <div className="text-center py-4">
-          <Button variant="outline" size="sm" className="transition-all duration-300 hover:scale-105 hover:bg-primary/5">
+          <button type="button" className={`${buttonVariants({ variant: 'outline', size: 'sm' })} transition-all duration-300 hover:scale-105 hover:bg-primary/5`}>
             Load More Transactions
-          </Button>
+          </button>
         </div>
       </CardContent>
     </Card>

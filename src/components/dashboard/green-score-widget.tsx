@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { Badge, badgeVariants } from "@/components/ui/badge";
 import { Leaf, TreePine, Recycle, Zap, TrendingUp, TrendingDown } from "lucide-react";
 
 interface GreenMetric {
@@ -123,9 +123,9 @@ export const GreenScoreWidget: React.FC = () => {
           </div>
 
           {/* Action Button */}
-          <Button className="w-full bg-success hover:bg-success/90 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-success/20">
+          <button type="button" className={`${buttonVariants()} w-full bg-success hover:bg-success/90 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-success/20`}>
             View Eco Insights
-          </Button>
+          </button>
         </CardContent>
       </Card>
 
@@ -138,8 +138,7 @@ export const GreenScoreWidget: React.FC = () => {
                 {metric.icon}
               </div>
               <Badge 
-                variant={metric.trend > 0 ? "default" : "secondary"}
-                className="text-xs transition-all duration-300 group-hover:scale-110"
+                className={`${badgeVariants({ variant: metric.trend > 0 ? 'default' : 'secondary' })} text-xs transition-all duration-300 group-hover:scale-110`}
               >
                 {metric.trend > 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                 {Math.abs(metric.trend)}%
@@ -164,18 +163,18 @@ export const GreenScoreWidget: React.FC = () => {
           {sustainableRecommendations.map((rec, index) => (
             <div key={index} className="p-3 rounded-lg bg-muted/50 space-y-2 group transition-all duration-300 hover:bg-muted/70 hover:shadow-md hover:-translate-y-0.5 cursor-pointer">
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-xs transition-all duration-300 group-hover:scale-105">
+                <div className={`${badgeVariants({ variant: 'outline' })} text-xs transition-all duration-300 group-hover:scale-105`}>
                   {rec.category}
-                </Badge>
+                </div>
               </div>
               <p className="text-sm font-medium transition-colors duration-300 group-hover:text-primary">{rec.suggestion}</p>
               <p className="text-xs text-success transition-all duration-300 group-hover:font-medium">{rec.impact}</p>
             </div>
           ))}
           
-          <Button variant="outline" size="sm" className="w-full mt-4 transition-all duration-300 hover:scale-105 hover:bg-success/5 hover:border-success">
+          <button type="button" className={`${buttonVariants({ variant: 'outline', size: 'sm' })} w-full mt-4 transition-all duration-300 hover:scale-105 hover:bg-success/5 hover:border-success`}>
             See All Recommendations
-          </Button>
+          </button>
         </CardContent>
       </Card>
     </div>
