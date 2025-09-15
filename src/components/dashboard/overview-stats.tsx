@@ -7,8 +7,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 export const OverviewStats: React.FC = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Total Balance */}
-      <StatCard
+      <div className="animate-slide-up" style={{ animationDelay: '0ms' }}>
+        {/* Total Balance */}
+        <StatCard
         variant="primary"
         title="Total Balance"
         value="₹2,45,670"
@@ -33,10 +34,12 @@ export const OverviewStats: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         }
-      />
+        />
+      </div>
 
-      {/* Monthly Spending */}
-      <StatCard
+      <div className="animate-slide-up" style={{ animationDelay: '100ms' }}>
+        {/* Monthly Spending */}
+        <StatCard
         variant="elevated"
         title="Monthly Spending"
         value="₹48,920"
@@ -47,10 +50,12 @@ export const OverviewStats: React.FC = () => {
           isPositive: false,
           label: "above average"
         }}
-      />
+        />
+      </div>
 
-      {/* Savings Goal */}
-      <StatCard
+      <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+        {/* Savings Goal */}
+        <StatCard
         variant="success"
         title="Savings Goal"
         value="₹75,000"
@@ -61,10 +66,12 @@ export const OverviewStats: React.FC = () => {
           isPositive: true,
           label: "progress this month"
         }}
-      />
+        />
+      </div>
 
-      {/* Anomalies Detected */}
-      <StatCard
+      <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
+        {/* Anomalies Detected */}
+        <StatCard
         variant="warning"
         title="Anomalies Detected"
         value="3"
@@ -75,7 +82,8 @@ export const OverviewStats: React.FC = () => {
             Review
           </Button>
         }
-      />
+        />
+      </div>
     </div>
   );
 };

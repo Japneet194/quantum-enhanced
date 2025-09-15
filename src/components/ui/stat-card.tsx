@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const statCardVariants = cva(
-  "relative overflow-hidden rounded-lg border transition-all duration-300 hover:shadow-lg",
+  "relative overflow-hidden rounded-lg border transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 hover:scale-105 cursor-pointer group animate-scale-in",
   {
     variants: {
       variant: {
@@ -51,21 +51,21 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         {...props}
       >
         {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-80" />
         
         <div className="relative z-10">
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
               {icon && (
-                <div className="p-2 rounded-lg bg-white/10 backdrop-blur-sm">
+                <div className="p-2 rounded-lg bg-white/10 backdrop-blur-sm transition-all duration-300 group-hover:scale-125 group-hover:rotate-12">
                   {icon}
                 </div>
               )}
               <div>
-                <p className="text-sm font-medium opacity-80">{title}</p>
+                <p className="text-sm font-medium opacity-80 transition-all duration-300 group-hover:opacity-100">{title}</p>
                 {subtitle && (
-                  <p className="text-xs opacity-60 mt-1">{subtitle}</p>
+                  <p className="text-xs opacity-60 mt-1 transition-all duration-300 group-hover:opacity-80">{subtitle}</p>
                 )}
               </div>
             </div>
@@ -74,7 +74,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 
           {/* Value */}
           <div className="mb-3">
-            <p className="text-3xl font-bold tracking-tight">{value}</p>
+            <p className="text-3xl font-bold tracking-tight transition-all duration-300 group-hover:scale-110">{value}</p>
           </div>
 
           {/* Trend */}

@@ -116,7 +116,7 @@ const formatTimestamp = (timestamp: Date) => {
 
 export const TransactionFeed: React.FC = () => {
   return (
-    <Card className="col-span-full lg:col-span-2">
+    <Card className="col-span-full lg:col-span-2 animate-slide-in-left">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
@@ -124,31 +124,32 @@ export const TransactionFeed: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {mockTransactions.map((transaction) => {
+        {mockTransactions.map((transaction, index) => {
           const CategoryIcon = categoryIcons[transaction.category as keyof typeof categoryIcons] || ShoppingCart;
           
           return (
             <div
               key={transaction.id}
               className={cn(
-                "p-4 rounded-lg border transition-all duration-200 hover:shadow-md",
+                "p-4 rounded-lg border transition-all duration-500 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer animate-slide-up group",
                 transaction.isAnomaly 
-                  ? "border-warning/30 bg-warning-light" 
-                  : "border-border bg-card"
+                  ? "border-warning/30 bg-warning-light hover:border-warning/50 hover:shadow-warning/10" 
+                  : "border-border bg-card hover:border-primary/20 hover:shadow-primary/10"
               )}
+              style={{ animationDelay: `${index * 150}ms` }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 flex-1">
                   {/* Icon & Category */}
-                  <div className="p-2 rounded-lg bg-muted">
-                    <CategoryIcon className="w-4 h-4" />
+                  <div className="p-2 rounded-lg bg-muted transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/10">
+                    <CategoryIcon className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                   </div>
                   
                   {/* Transaction Details */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-semibold truncate">{transaction.merchant}</h4>
-                      <span className="font-bold text-lg">
+                      <h4 className="font-semibold truncate transition-colors duration-300 group-hover:text-primary">{transaction.merchant}</h4>
+                      <span className="font-bold text-lg transition-all duration-300 group-hover:scale-105">
                         {formatAmount(transaction.amount, transaction.currency)}
                       </span>
                     </div>
@@ -164,8 +165,8 @@ export const TransactionFeed: React.FC = () => {
 
                     {/* Anomaly Alert */}
                     {transaction.isAnomaly && transaction.anomalyReason && (
-                      <div className="flex items-center gap-2 p-2 rounded bg-warning/10 border border-warning/20 mb-2">
-                        <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
+                      <div className="flex items-center gap-2 p-2 rounded bg-warning/10 border border-warning/20 mb-2 animate-bounce-in">
+                        <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0 animate-pulse" />
                         <span className="text-xs text-warning-foreground">
                           {transaction.anomalyReason}
                         </span>
@@ -176,8 +177,8 @@ export const TransactionFeed: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         {/* Carbon Score */}
-                        <div className="flex items-center gap-1">
-                          <Leaf className={cn("w-3 h-3", getCarbonColor(transaction.carbonScore))} />
+                        <div className="flex items-center gap-1 group/carbon transition-all duration-300 hover:scale-110">
+                          <Leaf className={cn("w-3 h-3 transition-transform duration-300 group-hover/carbon:rotate-12", getCarbonColor(transaction.carbonScore))} />
                           <span className={cn("text-xs font-medium", getCarbonColor(transaction.carbonScore))}>
                             {transaction.carbonScore}
                           </span>
@@ -203,10 +204,10 @@ export const TransactionFeed: React.FC = () => {
                       {/* Action Buttons */}
                       {transaction.isAnomaly && transaction.status !== "verified" && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-success/10 hover:text-success hover:border-success">
                             Verify
                           </Button>
-                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs">
+                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-danger/10 hover:text-danger hover:border-danger">
                             Flag
                           </Button>
                         </div>
@@ -220,7 +221,7 @@ export const TransactionFeed: React.FC = () => {
         })}
 
         <div className="text-center py-4">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="transition-all duration-300 hover:scale-105 hover:bg-primary/5">
             Load More Transactions
           </Button>
         </div>

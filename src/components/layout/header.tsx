@@ -16,29 +16,29 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-up">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
+          <div className="flex items-center gap-3 group">
+            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
               <span className="text-primary-foreground font-bold text-sm">Q</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent transition-all duration-300 group-hover:scale-105">
                 QEADS
               </h1>
-              <p className="text-xs text-muted-foreground">Quantum-Enhanced Anomaly Detection</p>
+              <p className="text-xs text-muted-foreground transition-colors duration-300 group-hover:text-foreground">Quantum-Enhanced Anomaly Detection</p>
             </div>
           </div>
 
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <div className="relative w-full group">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 transition-all duration-300 group-focus-within:text-primary group-focus-within:scale-110" />
               <Input 
                 placeholder="Search transactions, merchants..." 
-                className="pl-10 bg-muted/30 border-border/50"
+                className="pl-10 bg-muted/30 border-border/50 transition-all duration-300 focus:bg-background focus:shadow-lg focus:shadow-primary/10 focus:scale-105"
               />
             </div>
           </div>
@@ -50,22 +50,22 @@ export const Header: React.FC = () => {
               variant="ghost" 
               size="sm" 
               onClick={toggleTheme}
-              className="h-9 w-9 p-0"
+              className="h-9 w-9 p-0 transition-all duration-300 hover:scale-110 hover:bg-primary/10 hover:rotate-12"
             >
               {theme === 'light' ? (
-                <Moon className="w-4 h-4" />
+                <Moon className="w-4 h-4 transition-transform duration-300" />
               ) : (
-                <Sun className="w-4 h-4" />
+                <Sun className="w-4 h-4 transition-transform duration-300" />
               )}
             </Button>
 
             {/* Notifications */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 relative">
-                  <Bell className="w-4 h-4" />
+                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 relative group transition-all duration-300 hover:scale-110 hover:bg-danger/10">
+                  <Bell className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                   <Badge 
-                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-danger"
+                    className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-danger animate-pulse"
                   >
                     3
                   </Badge>
@@ -114,15 +114,15 @@ export const Header: React.FC = () => {
             </DropdownMenu>
 
             {/* Settings */}
-            <Button variant="ghost" size="sm" className="h-9 w-9 p-0">
+            <Button variant="ghost" size="sm" className="h-9 w-9 p-0 transition-all duration-300 hover:scale-110 hover:bg-accent/50 hover:rotate-45">
               <Settings className="w-4 h-4" />
             </Button>
 
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 w-9 p-0 rounded-full">
-                  <Avatar className="h-9 w-9">
+                <Button variant="ghost" className="h-9 w-9 p-0 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/20">
+                  <Avatar className="h-9 w-9 transition-transform duration-300 hover:scale-105">
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>AS</AvatarFallback>
                   </Avatar>

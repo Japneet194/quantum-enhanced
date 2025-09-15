@@ -117,6 +117,68 @@ export default {
             transform: "translateY(0)",
           },
         },
+        "slide-in-left": {
+          from: {
+            opacity: "0",
+            transform: "translateX(-20px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateX(0)",
+          },
+        },
+        "slide-in-right": {
+          from: {
+            opacity: "0",
+            transform: "translateX(20px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateX(0)",
+          },
+        },
+        "scale-in": {
+          from: {
+            opacity: "0",
+            transform: "scale(0.95)",
+          },
+          to: {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "bounce-in": {
+          "0%": {
+            transform: "scale(0.3)",
+            opacity: "0",
+          },
+          "50%": {
+            transform: "scale(1.05)",
+          },
+          "70%": {
+            transform: "scale(0.9)",
+          },
+          "100%": {
+            transform: "scale(1)",
+            opacity: "1",
+          },
+        },
+        "shimmer": {
+          "0%": {
+            backgroundPosition: "-200% 0",
+          },
+          "100%": {
+            backgroundPosition: "200% 0",
+          },
+        },
+        "progress-fill": {
+          from: {
+            transform: "translateX(-100%)",
+          },
+          to: {
+            transform: "translateX(0%)",
+          },
+        },
         "fade-in": {
           from: {
             opacity: "0",
@@ -132,6 +194,12 @@ export default {
         "float": "float 3s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
         "slide-up": "slide-up 0.5s ease-out",
+        "slide-in-left": "slide-in-left 0.5s ease-out",
+        "slide-in-right": "slide-in-right 0.5s ease-out",
+        "scale-in": "scale-in 0.3s ease-out",
+        "bounce-in": "bounce-in 0.6s ease-out",
+        "shimmer": "shimmer 2s linear infinite",
+        "progress-fill": "progress-fill 1.5s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
       },
     },

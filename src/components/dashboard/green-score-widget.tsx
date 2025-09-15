@@ -73,22 +73,22 @@ export const GreenScoreWidget: React.FC = () => {
   const progress = (overallScore / monthlyGoal) * 100;
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 animate-slide-in-right">
       {/* Main Green Score Card */}
-      <Card className="bg-gradient-to-br from-success/10 to-accent/5 border-success/20">
+      <Card className="bg-gradient-to-br from-success/10 to-accent/5 border-success/20 transition-all duration-300 hover:shadow-xl hover:shadow-success/20 hover:-translate-y-1">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-success">
-            <Leaf className="w-5 h-5" />
+            <Leaf className="w-5 h-5 animate-float" />
             Environmental Impact Score
           </CardTitle>
         </CardHeader>
         <CardContent>
           {/* Score Circle */}
           <div className="flex items-center justify-center mb-6">
-            <div className="relative">
-              <div className="w-32 h-32 rounded-full border-8 border-success/20 flex items-center justify-center">
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-full border-8 border-success/20 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-success/20">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-success">{overallScore}</div>
+                  <div className="text-4xl font-bold text-success transition-all duration-500 group-hover:scale-125">{overallScore}</div>
                   <div className="text-sm text-muted-foreground">/ 100</div>
                 </div>
               </div>
@@ -103,19 +103,19 @@ export const GreenScoreWidget: React.FC = () => {
                   strokeWidth="8"
                   strokeDasharray={`${(overallScore / 100) * 351.86} 351.86`}
                   strokeLinecap="round"
-                  className="transition-all duration-1000 ease-out"
+                  className="transition-all duration-1000 ease-out animate-progress-fill"
                 />
               </svg>
             </div>
           </div>
 
           {/* Progress to Goal */}
-          <div className="space-y-2 mb-6">
+          <div className="space-y-2 mb-6 group">
             <div className="flex justify-between text-sm">
-              <span>Monthly Goal Progress</span>
-              <span className="font-medium">{overallScore}/{monthlyGoal}</span>
+              <span className="transition-colors duration-300 group-hover:text-success">Monthly Goal Progress</span>
+              <span className="font-medium transition-all duration-300 group-hover:scale-110">{overallScore}/{monthlyGoal}</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-2 transition-all duration-500 hover:h-3" />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Current: {overallScore}pts</span>
               <span>Target: {monthlyGoal}pts</span>
@@ -123,7 +123,7 @@ export const GreenScoreWidget: React.FC = () => {
           </div>
 
           {/* Action Button */}
-          <Button className="w-full bg-success hover:bg-success/90">
+          <Button className="w-full bg-success hover:bg-success/90 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-success/20">
             View Eco Insights
           </Button>
         </CardContent>
@@ -132,48 +132,48 @@ export const GreenScoreWidget: React.FC = () => {
       {/* Green Metrics Grid */}
       <div className="grid grid-cols-2 gap-4">
         {greenMetrics.map((metric, index) => (
-          <Card key={index} className="p-4">
+          <Card key={index} className="p-4 group cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:shadow-success/10 animate-scale-in" style={{ animationDelay: `${index * 100}ms` }}>
             <div className="flex items-start justify-between mb-3">
-              <div className={metric.color}>
+              <div className={`${metric.color} transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12`}>
                 {metric.icon}
               </div>
               <Badge 
                 variant={metric.trend > 0 ? "default" : "secondary"}
-                className="text-xs"
+                className="text-xs transition-all duration-300 group-hover:scale-110"
               >
                 {metric.trend > 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                 {Math.abs(metric.trend)}%
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold transition-all duration-300 group-hover:scale-105">
                 {metric.value}<span className="text-sm text-muted-foreground ml-1">{metric.unit}</span>
               </p>
-              <p className="text-xs text-muted-foreground">{metric.label}</p>
+              <p className="text-xs text-muted-foreground transition-colors duration-300 group-hover:text-foreground">{metric.label}</p>
             </div>
           </Card>
         ))}
       </div>
 
       {/* Sustainable Recommendations */}
-      <Card>
+      <Card className="animate-fade-in" style={{ animationDelay: '500ms' }}>
         <CardHeader className="pb-4">
-          <CardTitle className="text-base">💡 Smart Eco Recommendations</CardTitle>
+          <CardTitle className="text-base transition-colors duration-300 hover:text-primary">💡 Smart Eco Recommendations</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {sustainableRecommendations.map((rec, index) => (
-            <div key={index} className="p-3 rounded-lg bg-muted/50 space-y-2">
+            <div key={index} className="p-3 rounded-lg bg-muted/50 space-y-2 group transition-all duration-300 hover:bg-muted/70 hover:shadow-md hover:-translate-y-0.5 cursor-pointer">
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs transition-all duration-300 group-hover:scale-105">
                   {rec.category}
                 </Badge>
               </div>
-              <p className="text-sm font-medium">{rec.suggestion}</p>
-              <p className="text-xs text-success">{rec.impact}</p>
+              <p className="text-sm font-medium transition-colors duration-300 group-hover:text-primary">{rec.suggestion}</p>
+              <p className="text-xs text-success transition-all duration-300 group-hover:font-medium">{rec.impact}</p>
             </div>
           ))}
           
-          <Button variant="outline" size="sm" className="w-full mt-4">
+          <Button variant="outline" size="sm" className="w-full mt-4 transition-all duration-300 hover:scale-105 hover:bg-success/5 hover:border-success">
             See All Recommendations
           </Button>
         </CardContent>
