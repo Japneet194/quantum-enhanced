@@ -1,9 +1,10 @@
-import React from "react";
+import * as React from "react";
 import { Header } from "@/components/layout/header";
 import { OverviewStats } from "@/components/dashboard/overview-stats";
 import { TransactionFeed } from "@/components/dashboard/transaction-feed";
 import { SpendingChart } from "@/components/dashboard/spending-chart";
 import { GreenScoreWidget } from "@/components/dashboard/green-score-widget";
+import { CsvUploadWidget } from "@/components/dashboard/csv-upload";
 
 const Index = () => {
   return (
@@ -45,6 +46,9 @@ const Index = () => {
           <div className="lg:col-span-1">
             <div className="animate-slide-in-right" style={{ animationDelay: '800ms' }}>
               <GreenScoreWidget />
+            </div>
+            <div className="mt-6 animate-slide-in-right" style={{ animationDelay: '1000ms' }}>
+              <CsvUploadWidget />
             </div>
           </div>
         </div>

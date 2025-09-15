@@ -1,19 +1,33 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+import * as React from "react";
+// Replaced Button usages with raw buttons to avoid variant typing issues
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell, Search, Settings, User, LogOut, Smartphone, Shield, Moon, Sun } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { SignedIn, SignedOut, UserButton, SignInButton, SignUpButton } from "@clerk/clerk-react";
 
 export const Header: React.FC = () => {
-  const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = React.useState<'light' | 'dark'>(() => {
+    const saved = typeof window !== 'undefined' ? (localStorage.getItem('theme') as 'light' | 'dark' | null) : null;
+    return saved || 'dark';
+  });
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
-    document.documentElement.classList.toggle('dark');
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+    try { localStorage.setItem('theme', newTheme); } catch {}
   };
+
+  React.useEffect(() => {
+    // Ensure root class reflects current theme on mount
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 animate-slide-up">
@@ -46,30 +60,29 @@ export const Header: React.FC = () => {
           {/* Actions */}
           <div className="flex items-center gap-3">
             {/* Theme Toggle */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <button
+              type="button"
               onClick={toggleTheme}
-              className="h-9 w-9 p-0 transition-all duration-300 hover:scale-110 hover:bg-primary/10 hover:rotate-12"
+              className="h-9 w-9 p-0 inline-flex items-center justify-center rounded-md transition-all duration-300 hover:scale-110 hover:bg-primary/10 hover:rotate-12"
             >
               {theme === 'light' ? (
                 <Moon className="w-4 h-4 transition-transform duration-300" />
               ) : (
                 <Sun className="w-4 h-4 transition-transform duration-300" />
               )}
-            </Button>
+            </button>
 
             {/* Notifications */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-9 w-9 p-0 relative group transition-all duration-300 hover:scale-110 hover:bg-danger/10">
+                <button type="button" className="h-9 w-9 p-0 inline-flex items-center justify-center rounded-md relative group transition-all duration-300 hover:scale-110 hover:bg-danger/10">
                   <Bell className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                   <Badge 
                     className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-danger animate-pulse"
                   >
                     3
                   </Badge>
-                </Button>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-80">
                 <DropdownMenuLabel>Notifications</DropdownMenuLabel>
@@ -114,47 +127,28 @@ export const Header: React.FC = () => {
             </DropdownMenu>
 
             {/* Settings */}
-            <Button variant="ghost" size="sm" className="h-9 w-9 p-0 transition-all duration-300 hover:scale-110 hover:bg-accent/50 hover:rotate-45">
+            <button type="button" className="h-9 w-9 p-0 inline-flex items-center justify-center rounded-md transition-all duration-300 hover:scale-110 hover:bg-accent/50 hover:rotate-45">
               <Settings className="w-4 h-4" />
-            </Button>
+            </button>
 
-            {/* User Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-9 w-9 p-0 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/20">
-                  <Avatar className="h-9 w-9 transition-transform duration-300 hover:scale-105">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>AS</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">Arjun Sharma</p>
-                    <p className="text-xs text-muted-foreground">arjun.sharma@email.com</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Shield className="mr-2 h-4 w-4" />
-                  Security Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Smartphone className="mr-2 h-4 w-4" />
-                  Mobile App
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-danger">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* User Menu / Clerk */}
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+            <SignedOut>
+              <div className="flex items-center gap-2">
+                <SignInButton>
+                  <button type="button" className="px-3 h-9 inline-flex items-center justify-center rounded-md hover:bg-accent">
+                    Sign in
+                  </button>
+                </SignInButton>
+                <SignUpButton>
+                  <button type="button" className="px-3 h-9 inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+                    Sign up
+                  </button>
+                </SignUpButton>
+              </div>
+            </SignedOut>
           </div>
         </div>
       </div>

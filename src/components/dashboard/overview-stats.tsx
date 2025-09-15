@@ -1,10 +1,26 @@
-import React from "react";
+import * as React from "react";
+import { useMemo } from "react";
 import { StatCard } from "@/components/ui/stat-card";
 import { TrendingUp, TrendingDown, DollarSign, CreditCard, PiggyBank, AlertTriangle, Smartphone, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useAnalytics } from "@/hooks/useAnalytics";
+import { useAnomalies } from "@/hooks/useAnomalies";
 
 export const OverviewStats: React.FC = () => {
+  const { patterns, loading: loadingPatterns } = useAnalytics();
+  const { items: anomalies } = useAnomalies();
+
+  const monthlySpending = useMemo(() => {
+    if (!patterns.length) return { value: 0, variance: 0 };
+    const total = patterns.reduce((sum, p) => sum + Math.max(0, p.avg * p.count), 0);
+    const expected = patterns.reduce((sum, p) => sum + Math.max(0, p.avg) * p.count, 0);
+    const variance = expected ? ((total - expected) / expected) * 100 : 0;
+    return { value: total, variance };
+  }, [patterns]);
+
+  const anomaliesCount = anomalies.length;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <div className="animate-slide-up" style={{ animationDelay: '0ms' }}>
@@ -12,7 +28,7 @@ export const OverviewStats: React.FC = () => {
         <StatCard
         variant="primary"
         title="Total Balance"
-        value="₹2,45,670"
+        value={"₹" + (245670).toLocaleString('en-IN')}
         subtitle="Across all accounts"
         icon={<DollarSign className="w-5 h-5" />}
         trend={{
@@ -42,13 +58,13 @@ export const OverviewStats: React.FC = () => {
         <StatCard
         variant="elevated"
         title="Monthly Spending"
-        value="₹48,920"
-        subtitle="February 2024"
+        value={loadingPatterns ? "Loading..." : "₹" + Math.abs(monthlySpending.value).toLocaleString('en-IN')}
+        subtitle="Last 30 days"
         icon={<CreditCard className="w-5 h-5" />}
         trend={{
-          value: 12.5,
-          isPositive: false,
-          label: "above average"
+          value: Number.isFinite(monthlySpending.variance) ? Number(monthlySpending.variance.toFixed(1)) : 0,
+          isPositive: (monthlySpending.variance ?? 0) < 0,
+          label: (monthlySpending.variance ?? 0) > 0 ? "above average" : "below average"
         }}
         />
       </div>
@@ -74,8 +90,8 @@ export const OverviewStats: React.FC = () => {
         <StatCard
         variant="warning"
         title="Anomalies Detected"
-        value="3"
-        subtitle="Requiring attention"
+        value={String(anomaliesCount)}
+        subtitle="Last 30 days"
         icon={<AlertTriangle className="w-5 h-5" />}
         action={
           <Button size="sm" variant="outline" className="h-7 px-3 text-xs border-warning/30 text-warning hover:bg-warning/10">

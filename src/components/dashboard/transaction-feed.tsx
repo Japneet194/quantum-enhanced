@@ -1,9 +1,12 @@
-import React from "react";
+import * as React from "react";
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, CheckCircle, XCircle, Leaf, ShoppingCart, Car, Home, Gamepad2, Coffee } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useApi } from "@/hooks/useApi";
 
 interface Transaction {
   id: string;
@@ -115,6 +118,32 @@ const formatTimestamp = (timestamp: Date) => {
 };
 
 export const TransactionFeed: React.FC = () => {
+  const { items, loading, error } = useTransactions();
+  const api = useApi();
+  const feedItems: Transaction[] = useMemo(() => {
+    if (items && items.length) {
+      return items.map((t) => ({
+        id: t._id,
+        merchant: t.merchant,
+        amount: t.amount,
+        currency: t.currency,
+        category: t.category,
+        timestamp: new Date(t.timestamp),
+        isAnomaly: t.isAnomaly,
+        anomalyReason: t.anomalyReason,
+        carbonScore: t.carbonScore ?? 50,
+        status: t.status,
+      }));
+    }
+    return mockTransactions;
+  }, [items]);
+
+  const updateStatus = async (id: string, status: 'verified' | 'flagged') => {
+    try {
+      await api.patch(`/transactions/${id}`, { status });
+    } catch (e) { /* handled by WS refresh */ }
+  };
+
   return (
     <Card className="col-span-full lg:col-span-2 animate-slide-in-left">
       <CardHeader>
@@ -124,7 +153,8 @@ export const TransactionFeed: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {mockTransactions.map((transaction, index) => {
+        {error && <div className="text-sm text-danger">{String(error)}</div>}
+        {feedItems.map((transaction, index) => {
           const CategoryIcon = categoryIcons[transaction.category as keyof typeof categoryIcons] || ShoppingCart;
           
           return (
@@ -204,10 +234,10 @@ export const TransactionFeed: React.FC = () => {
                       {/* Action Buttons */}
                       {transaction.isAnomaly && transaction.status !== "verified" && (
                         <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-success/10 hover:text-success hover:border-success">
+                          <Button size="sm" variant="outline" onClick={() => updateStatus(transaction.id, 'verified')} className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-success/10 hover:text-success hover:border-success">
                             Verify
                           </Button>
-                          <Button size="sm" variant="outline" className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-danger/10 hover:text-danger hover:border-danger">
+                          <Button size="sm" variant="outline" onClick={() => updateStatus(transaction.id, 'flagged')} className="h-6 px-2 text-xs transition-all duration-300 hover:scale-105 hover:bg-danger/10 hover:text-danger hover:border-danger">
                             Flag
                           </Button>
                         </div>
