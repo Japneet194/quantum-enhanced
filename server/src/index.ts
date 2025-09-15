@@ -43,8 +43,20 @@ app.use('/auth', authRouter);
 app.use('/transactions', txRouter);
 app.use('/analytics', analyticsRouter);
 
-// Error handler
+// Error handler with Multer-specific handling
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+  // Multer's errors are instances of MulterError and have code and message
+  try {
+    const MulterError = require('multer').MulterError;
+    if (err instanceof MulterError || (err && err.code && typeof err.code === 'string')) {
+      console.error('Multer error:', err.code, err.message);
+      const msg = err.code === 'LIMIT_FILE_SIZE' ? 'File too large' : err.message || 'File upload error';
+      return res.status(400).json({ message: msg, code: err.code });
+    }
+  } catch (e) {
+    // ignore require errors
+  }
+
   console.error(err);
   res.status(err.status || 500).json({ message: err.message || 'Internal Server Error' });
 });

@@ -116,17 +116,58 @@ txRouter.patch('/:id', authMiddleware, async (req: AuthRequest, res: Response) =
 });
 
 // CSV Upload: expects headers: date,merchant,amount,currency(optional)
-txRouter.post('/upload/csv', maybeAuth, upload.single('file'), async (req: AuthRequest, res: Response) => {
+// Multer can surface errors (e.g. file too large) — wrap handler to catch them and return sensible messages.
+txRouter.post('/upload/csv', maybeAuth, (req: Request, res: Response, next: any) => {
+  // run multer and propagate errors to express error handler
+  upload.single('file')(req as any, res as any, (err: any) => {
+    if (err) return next(err);
+    return next();
+  });
+}, async (req: AuthRequest, res: Response) => {
+  // Diagnostic logging to help debug client issues
+  try {
+    console.log('CSV upload request headers:', {
+      origin: req.headers.origin,
+      referer: req.headers.referer,
+      'content-type': req.headers['content-type'],
+      'authorization-present': !!req.headers.authorization,
+      'x-dev-user-id': req.headers['x-dev-user-id'],
+    });
+  } catch (e) {
+    // ignore logging errors
+  }
+
   const file = (req as unknown as { file?: { buffer: Buffer; originalname: string; mimetype: string; size?: number } }).file;
   if (!file) {
-    console.warn('CSV upload: no file present');
-  } else {
-    console.log('CSV upload received:', { name: file.originalname, type: file.mimetype, size: file.size });
+    console.warn('CSV upload: no file present on request. Content-Type header:', req.headers['content-type']);
+    return res.status(400).json({ message: 'file is required. Ensure the frontend sends multipart/form-data with field name "file".' });
   }
-  if (!file) return res.status(400).json({ message: 'file is required' });
-  const csvText = file.buffer.toString('utf8');
-  const parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
-  if (parsed.errors?.length) return res.status(400).json({ message: 'Invalid CSV', errors: parsed.errors.map((e: any) => e.message) });
+
+  console.log('CSV upload received:', { name: file.originalname, type: file.mimetype, size: file.size });
+
+  // Convert buffer -> string, handling common BOMs
+  let csvText: string;
+  try {
+    csvText = file.buffer.toString('utf8');
+    // strip UTF-8 BOM if present
+    if (csvText.charCodeAt(0) === 0xFEFF) csvText = csvText.slice(1);
+  } catch (e: any) {
+    console.error('CSV upload: failed to read buffer', e);
+    return res.status(400).json({ message: 'Failed to read uploaded file' });
+  }
+
+  let parsed: Papa.ParseResult<any>;
+  try {
+    parsed = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+  } catch (e: any) {
+    console.error('CSV upload: papaparse thrown error', e);
+    return res.status(400).json({ message: 'Invalid CSV: parse error', details: String(e) });
+  }
+
+  if (parsed.errors?.length) {
+    console.warn('CSV upload: parse reported errors', parsed.errors);
+    return res.status(400).json({ message: 'Invalid CSV', errors: parsed.errors.map((e: any) => e.message || e) });
+  }
 
   type Row = { date?: string; merchant?: string; amount?: string; currency?: string };
   const rows = (parsed.data as Row[]).filter(r => r.merchant && r.amount);
