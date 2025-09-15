@@ -14,7 +14,12 @@ if (!PUBLISHABLE_KEY && typeof window !== 'undefined') {
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
 		{PUBLISHABLE_KEY ? (
-			<ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+			<ClerkProvider
+				publishableKey={PUBLISHABLE_KEY}
+				afterSignOutUrl="/"
+				routerPush={(to)=>window.location.assign(to)}
+				routerReplace={(to)=>window.location.replace(to)}
+			>
 				<App />
 			</ClerkProvider>
 		) : (

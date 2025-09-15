@@ -18,7 +18,6 @@ const SignInPage: React.FC = () => {
         path="/sign-in"
         signUpUrl="/sign-up"
         afterSignInUrl="/"
-        redirectUrl="/sso-callback"
         appearance={{ elements: { formButtonPrimary: 'bg-primary hover:bg-primary/90' } }}
         // Clerk automatically shows Email/Password; to ensure providers are visible, enable them in Clerk Dashboard.
         // The component will display "Continue with Google/Apple" buttons when configured.

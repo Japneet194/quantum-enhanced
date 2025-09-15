@@ -26,8 +26,11 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/sign-up" element={<SignUpPage />} />
-            {/* Clerk OAuth callback route for social providers */}
+            {/* Clerk OAuth callback routes for social providers (cover common variations) */}
             <Route path="/sso-callback" element={<AuthenticateWithRedirectCallback />} />
+            <Route path="/sso-callback/*" element={<AuthenticateWithRedirectCallback />} />
+            <Route path="/sign-in/sso-callback" element={<AuthenticateWithRedirectCallback />} />
+            <Route path="/sign-up/sso-callback" element={<AuthenticateWithRedirectCallback />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
